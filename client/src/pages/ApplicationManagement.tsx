@@ -370,8 +370,8 @@ export default function ApplicationManagement() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => handleEditApplication(app)}
-                          data-testid={`button-edit-application-${app.id}`}
+                          onClick={() => handleEditApplication(application)}
+                          data-testid={`button-edit-application-${application.id}`}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -381,17 +381,17 @@ export default function ApplicationManagement() {
                         <Button 
                           variant="outline" 
                           size="sm"
-                          onClick={() => handleDeleteApplication(app.id)}
+                          onClick={() => handleDeleteApplication(application.id)}
                           className="text-red-600 hover:text-red-700"
-                          data-testid={`button-delete-application-${app.id}`}
+                          data-testid={`button-delete-application-${application.id}`}
                         >
                           <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
                       
                       <Select 
-                        value={app.status} 
-                        onValueChange={(value) => handleStatusChange(app.id, value)}
+                        value={application.status} 
+                        onValueChange={(value) => handleStatusChange(application.id, value)}
                       >
                         <SelectTrigger className="w-36">
                           <SelectValue />

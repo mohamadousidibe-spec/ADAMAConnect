@@ -346,6 +346,156 @@ export default function JobManagement() {
                 Nouvelle Offre
               </Button>
             </DialogTrigger>
+            <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+              <DialogHeader>
+                <DialogTitle>Créer une nouvelle offre d'emploi</DialogTitle>
+              </DialogHeader>
+              
+              <div className="grid gap-4 py-4">
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="create-title">Titre du poste *</Label>
+                    <Input
+                      id="create-title"
+                      value={createForm.title}
+                      onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
+                      placeholder="Ex: Développeur Full Stack"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="create-company">Entreprise *</Label>
+                    <Input
+                      id="create-company"
+                      value={createForm.company}
+                      onChange={(e) => setCreateForm({ ...createForm, company: e.target.value })}
+                      placeholder="Ex: AeroTech Solutions"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="create-location">Localisation *</Label>
+                    <Input
+                      id="create-location"
+                      value={createForm.location}
+                      onChange={(e) => setCreateForm({ ...createForm, location: e.target.value })}
+                      placeholder="Ex: Paris, France"
+                    />
+                  </div>
+                  <div>
+                    <Label htmlFor="create-salary">Salaire</Label>
+                    <Input
+                      id="create-salary"
+                      value={createForm.salary}
+                      onChange={(e) => setCreateForm({ ...createForm, salary: e.target.value })}
+                      placeholder="Ex: 45000-60000€"
+                    />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="create-contract">Type de contrat *</Label>
+                    <Select value={createForm.contractType} onValueChange={(value) => setCreateForm({ ...createForm, contractType: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un type" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="CDI">CDI</SelectItem>
+                        <SelectItem value="CDD">CDD</SelectItem>
+                        <SelectItem value="Freelance">Freelance</SelectItem>
+                        <SelectItem value="Stage">Stage</SelectItem>
+                        <SelectItem value="Apprentissage">Apprentissage</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label htmlFor="create-experience">Niveau d'expérience</Label>
+                    <Select value={createForm.experienceLevel} onValueChange={(value) => setCreateForm({ ...createForm, experienceLevel: value })}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Sélectionner un niveau" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Débutant">Débutant</SelectItem>
+                        <SelectItem value="Intermédiaire">Intermédiaire</SelectItem>
+                        <SelectItem value="Senior">Senior</SelectItem>
+                        <SelectItem value="Expert">Expert</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+
+                <div>
+                  <Label htmlFor="create-description">Description du poste *</Label>
+                  <Textarea
+                    id="create-description"
+                    value={createForm.description}
+                    onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
+                    placeholder="Décrivez le poste en détail..."
+                    rows={4}
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="create-requirements">Exigences et qualifications</Label>
+                  <Textarea
+                    id="create-requirements"
+                    value={createForm.requirements}
+                    onChange={(e) => setCreateForm({ ...createForm, requirements: e.target.value })}
+                    placeholder="Compétences requises, diplômes, expérience..."
+                    rows={3}
+                  />
+                </div>
+
+                <div>
+                  <Label>Compétences techniques</Label>
+                  <div className="space-y-2">
+                    {createForm.skills.map((skill, index) => (
+                      <div key={index} className="flex space-x-2">
+                        <Input
+                          value={skill}
+                          onChange={(e) => handleCreateSkillChange(index, e.target.value)}
+                          placeholder="Ex: React.js"
+                        />
+                        <Button 
+                          type="button" 
+                          variant="outline" 
+                          size="sm"
+                          onClick={() => removeCreateSkill(index)}
+                        >
+                          ×
+                        </Button>
+                      </div>
+                    ))}
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      size="sm"
+                      onClick={addCreateSkill}
+                    >
+                      + Ajouter une compétence
+                    </Button>
+                  </div>
+                </div>
+
+                <div className="flex justify-end space-x-2 pt-4">
+                  <Button 
+                    variant="outline" 
+                    onClick={() => setIsCreateDialogOpen(false)}
+                  >
+                    Annuler
+                  </Button>
+                  <Button 
+                    onClick={handleCreateJob}
+                    disabled={createJobMutation.isPending || !createForm.title || !createForm.company || !createForm.location || !createForm.description || !createForm.contractType}
+                    data-testid="button-create-job"
+                  >
+                    {createJobMutation.isPending ? 'Création...' : 'Créer l\'offre'}
+                  </Button>
+                </div>
+              </div>
+            </DialogContent>
           </Dialog>
         </div>
 
@@ -584,7 +734,7 @@ export default function JobManagement() {
                       size="sm"
                       onClick={() => removeSkill(index)}
                     >
-                      <X className="h-4 w-4" />
+                      ×
                     </Button>
                   </div>
                 ))}
@@ -613,160 +763,6 @@ export default function JobManagement() {
                 data-testid="button-save-job"
               >
                 {updateJobMutation.isPending ? 'Mise à jour...' : 'Sauvegarder'}
-              </Button>
-            </div>
-          </div>
-        </DialogContent>
-      </Dialog>
-
-      {/* Modal de création d'offre */}
-      <Dialog open={isCreateDialogOpen} onOpenChange={setIsCreateDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Créer une nouvelle offre d'emploi</DialogTitle>
-          </DialogHeader>
-          
-          <div className="grid gap-4 py-4">
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="create-title">Titre du poste *</Label>
-                <Input
-                  id="create-title"
-                  value={createForm.title}
-                  onChange={(e) => setCreateForm({ ...createForm, title: e.target.value })}
-                  placeholder="Ex: Développeur Full Stack"
-                />
-              </div>
-              <div>
-                <Label htmlFor="create-company">Entreprise *</Label>
-                <Input
-                  id="create-company"
-                  value={createForm.company}
-                  onChange={(e) => setCreateForm({ ...createForm, company: e.target.value })}
-                  placeholder="Ex: AeroTech Solutions"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="create-location">Localisation *</Label>
-                <Input
-                  id="create-location"
-                  value={createForm.location}
-                  onChange={(e) => setCreateForm({ ...createForm, location: e.target.value })}
-                  placeholder="Ex: Paris, France"
-                />
-              </div>
-              <div>
-                <Label htmlFor="create-salary">Salaire</Label>
-                <Input
-                  id="create-salary"
-                  value={createForm.salary}
-                  onChange={(e) => setCreateForm({ ...createForm, salary: e.target.value })}
-                  placeholder="Ex: 45000-60000€"
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="create-contract">Type de contrat *</Label>
-                <Select value={createForm.contractType} onValueChange={(value) => setCreateForm({ ...createForm, contractType: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un type" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="CDI">CDI</SelectItem>
-                    <SelectItem value="CDD">CDD</SelectItem>
-                    <SelectItem value="Freelance">Freelance</SelectItem>
-                    <SelectItem value="Stage">Stage</SelectItem>
-                    <SelectItem value="Apprentissage">Apprentissage</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div>
-                <Label htmlFor="create-experience">Niveau d'expérience</Label>
-                <Select value={createForm.experienceLevel} onValueChange={(value) => setCreateForm({ ...createForm, experienceLevel: value })}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Sélectionner un niveau" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="Débutant">Débutant</SelectItem>
-                    <SelectItem value="Intermédiaire">Intermédiaire</SelectItem>
-                    <SelectItem value="Senior">Senior</SelectItem>
-                    <SelectItem value="Expert">Expert</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div>
-              <Label htmlFor="create-description">Description du poste *</Label>
-              <Textarea
-                id="create-description"
-                value={createForm.description}
-                onChange={(e) => setCreateForm({ ...createForm, description: e.target.value })}
-                placeholder="Décrivez le poste en détail..."
-                rows={4}
-              />
-            </div>
-
-            <div>
-              <Label htmlFor="create-requirements">Exigences et qualifications</Label>
-              <Textarea
-                id="create-requirements"
-                value={createForm.requirements}
-                onChange={(e) => setCreateForm({ ...createForm, requirements: e.target.value })}
-                placeholder="Compétences requises, diplômes, expérience..."
-                rows={3}
-              />
-            </div>
-
-            <div>
-              <Label>Compétences techniques</Label>
-              <div className="space-y-2">
-                {createForm.skills.map((skill, index) => (
-                  <div key={index} className="flex space-x-2">
-                    <Input
-                      value={skill}
-                      onChange={(e) => handleCreateSkillChange(index, e.target.value)}
-                      placeholder="Ex: React.js"
-                    />
-                    <Button 
-                      type="button" 
-                      variant="outline" 
-                      size="sm"
-                      onClick={() => removeCreateSkill(index)}
-                    >
-                      ×
-                    </Button>
-                  </div>
-                ))}
-                <Button 
-                  type="button" 
-                  variant="outline" 
-                  size="sm"
-                  onClick={addCreateSkill}
-                >
-                  + Ajouter une compétence
-                </Button>
-              </div>
-            </div>
-
-            <div className="flex justify-end space-x-2 pt-4">
-              <Button 
-                variant="outline" 
-                onClick={() => setIsCreateDialogOpen(false)}
-              >
-                Annuler
-              </Button>
-              <Button 
-                onClick={handleCreateJob}
-                disabled={createJobMutation.isPending || !createForm.title || !createForm.company || !createForm.location || !createForm.description || !createForm.contractType}
-                data-testid="button-create-job"
-              >
-                {createJobMutation.isPending ? 'Création...' : 'Créer l\'offre'}
               </Button>
             </div>
           </div>
