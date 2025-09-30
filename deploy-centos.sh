@@ -4,11 +4,11 @@ echo "🚀 Déploiement Serveur avec PostgreSQL - Application 2"
 echo "===================================================="
 
 # Variables spécifiques à l’app 2
-APP_NAME="crm-immobilier"
+APP_NAME="ADAMAConnect"
 APP_DIR="/var/www/$APP_NAME"
 SERVICE_USER="nginx"
 NGINX_CONF_DIR="/etc/nginx/conf.d"
-DB_NAME="crm_immobilier"
+DB_NAME="adama_connect"
 DB_USER="crm_user"
 DB_PASSWORD="crm_secure_password_2024"
 PORT=5001   # ⚠️ port différent de l’app 1
@@ -67,14 +67,11 @@ END
 GRANT ALL PRIVILEGES ON DATABASE $DB_NAME TO $DB_USER;
 EOF
 
-echo "📁 Création du répertoire d’application..."
-mkdir -p $APP_DIR
-cd /tmp
-rm -rf $APP_NAME
-git clone https://github.com/sidibemohamadou/$APP_NAME.git
-cp -r $APP_NAME/* $APP_DIR/
-chown -R $SERVICE_USER:$SERVICE_USER $APP_DIR
+
+echo "📁 Utilisation du répertoire existant..."
 cd $APP_DIR
+git pull origin main   # optionnel pour mettre à jour
+chown -R $SERVICE_USER:$SERVICE_USER $APP_DIR
 
 echo "📦 Installation des dépendances..."
 sudo -u $SERVICE_USER npm install
