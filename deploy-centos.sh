@@ -5,7 +5,7 @@ echo "===================================================="
 echo "📋 Système détecté: CentOS 10 Stream"
 echo ""
 
-# Variables de configuration
+# Variables de configuration ..
 APP_NAME="ADAMAConnect"
 APP_DIR="/var/www/$APP_NAME"
 SERVICE_USER="nginx"
